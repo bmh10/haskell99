@@ -8,3 +8,7 @@ myLast3 = head . reverse
 myButLast = head . drop 1 . reverse
 myButLast2 = last . init
 myButLast3 x = reverse x !! 1
+
+-- Q3
+elementAt l k = l !! (k-1)
+elementAt l k = last $ take k l
