@@ -11,4 +11,14 @@ myButLast3 x = reverse x !! 1
 
 -- Q3
 elementAt l k = l !! (k-1)
-elementAt l k = last $ take k l
+elementAt22 l k = last $ take k l
+
+-- Q4
+myLength = length
+myLength2 = foldl (\acc x -> acc + 1) 0
+myLength3 xs = sum $ map (+1) $ map (*0) xs
+myLength4 = sum . map(\_ -> 1)
+
+
+
+
