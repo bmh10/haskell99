@@ -20,5 +20,9 @@ myLength3 xs = sum $ map (+1) $ map (*0) xs
 myLength4 = sum . map(\_ -> 1)
 myLength5 = fst . last . zip [1..]
 
-
+-- Q5
+myReverse = reverse
+myReverse2 [] = []
+myReverse2 (x:xs) = myReverse2 xs ++ [x] 
+myReverse3 = foldl (flip (:)) []
 
