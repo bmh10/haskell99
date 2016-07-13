@@ -26,3 +26,8 @@ myReverse2 [] = []
 myReverse2 (x:xs) = myReverse2 xs ++ [x] 
 myReverse3 = foldl (flip (:)) []
 
+-- Q6
+isPalindrome s = s == reverse s
+isPalindrome2 [] = True
+isPalindrome2 [_] = True
+isPalindrome2 xs = (head xs) == (last xs) && (isPalindrome $ init $ tail $ xs) 
