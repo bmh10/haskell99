@@ -30,4 +30,4 @@ myReverse3 = foldl (flip (:)) []
 isPalindrome s = s == reverse s
 isPalindrome2 [] = True
 isPalindrome2 [_] = True
-isPalindrome2 xs = (head xs) == (last xs) && (isPalindrome $ init $ tail $ xs) 
+isPalindrome2 xs = (head xs) == (last xs) && (isPalindrome2 $ init $ tail $ xs) 
