@@ -56,3 +56,9 @@ compress2 = map head . group
 
 compress3 [] = []
 compress3 (x:xs) = x : (compress3 $ dropWhile (==x) xs)
+
+-- Q9
+pack :: Eq a => [a] -> [[a]]
+pack = group
+
+
