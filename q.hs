@@ -31,3 +31,15 @@ isPalindrome s = s == reverse s
 isPalindrome2 [] = True
 isPalindrome2 [_] = True
 isPalindrome2 xs = (head xs) == (last xs) && (isPalindrome2 $ init $ tail $ xs) 
+
+-- Q7
+data NestedList a = Elem a | List [NestedList a]
+
+flatten (Elem a) = [a]
+flatten (List a) = concatMap flatten a
+
+flatten2 (Elem a) = [a]
+flatten2 (List []) = []
+flatten2 (List (x:xs)) = flatten2 x ++ flatten2 (List xs)
+
+
