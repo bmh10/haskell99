@@ -1,3 +1,5 @@
+import Data.List
+
 -- Q1
 myLast1 = last
 myLast2 [x] = x
@@ -42,4 +44,15 @@ flatten2 (Elem a) = [a]
 flatten2 (List []) = []
 flatten2 (List (x:xs)) = flatten2 x ++ flatten2 (List xs)
 
+-- Q8
+compress [] = []
+compress [x] = [x]
+compress (x:y:xs)
+ | x == y = [x] ++ compress xs
+ | otherwise = [x] ++ compress (y:xs) 
 
+compress2 :: Eq a => [a] -> [a]
+compress2 = map head . group 
+
+compress3 [] = []
+compress3 (x:xs) = x : (compress3 $ dropWhile (==x) xs)
