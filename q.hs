@@ -61,4 +61,12 @@ compress3 (x:xs) = x : (compress3 $ dropWhile (==x) xs)
 pack :: Eq a => [a] -> [[a]]
 pack = group
 
+pack2 :: Eq a => [a] -> [[a]]
+pack2 [] = []
+pack2 (x:xs) = (x : takeWhile (== x) xs) : pack2(dropWhile (== x) xs)
+
+pack3 :: Eq a => [a] -> [[a]]
+pack3 [] = []
+pack3 (x:xs) = let (first, rest) = span (== x) xs
+               in (x:first) : pack3 rest
 
