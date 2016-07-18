@@ -70,3 +70,12 @@ pack3 [] = []
 pack3 (x:xs) = let (first, rest) = span (== x) xs
                in (x:first) : pack3 rest
 
+-- Q10
+encode xs = zip a b 
+            where grp = group xs
+                  a = map length grp
+                  b = map head grp
+
+encode2 xs = map (\x -> (length x, head x)) (group xs)
+
+encode3 xs = [(length x, head x) | x <- group xs]

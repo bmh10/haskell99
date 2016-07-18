@@ -66,4 +66,12 @@ tupleZipInf = zip [1..] "abc"
 fromIntegralEx = fromIntegral 4 + 1.2
 
 -- Syntax in Functions
+errorExample = error "Crash the program"
+
+-- Patterns to avoid repeating yourself
+patternEx :: String -> String
+patternEx all@(x:xs) = "The head of " ++ all ++ " is " ++ [x]
+
+
+
 
