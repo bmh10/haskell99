@@ -79,3 +79,12 @@ encode xs = zip a b
 encode2 xs = map (\x -> (length x, head x)) (group xs)
 
 encode3 xs = [(length x, head x) | x <- group xs]
+
+-- Q11
+data EncodeElem a = Multiple Int a | Single a
+  deriving (Show)
+
+encodeModified :: Eq a => [a] -> [EncodeElem a]
+encodeModified = map encodeHelper . encode
+  where encodeHelper (1,x) = Single x
+        encodeHelper (n,x) = Multiple n x
