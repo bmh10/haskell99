@@ -88,3 +88,9 @@ encodeModified :: Eq a => [a] -> [EncodeElem a]
 encodeModified = map encodeHelper . encode
   where encodeHelper (1,x) = Single x
         encodeHelper (n,x) = Multiple n x
+
+-- Q12
+decodeModified :: [EncodeElem a] -> [a]
+decodeModified = concatMap decodeHelper
+  where decodeHelper (Single x) = [x]
+        decodeHelper (Multiple n x) = replicate n x
