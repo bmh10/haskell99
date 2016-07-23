@@ -94,3 +94,13 @@ decodeModified :: [EncodeElem a] -> [a]
 decodeModified = concatMap decodeHelper
   where decodeHelper (Single x) = [x]
         decodeHelper (Multiple n x) = replicate n x
+
+-- Q13
+
+
+-- Q14
+dupli :: [a] -> [a]
+dupli = concatMap (\x -> [x,x])
+
+dupli2 [] = []
+dupli2 (x:xs) = x:x:dupli2 xs
