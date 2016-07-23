@@ -104,3 +104,7 @@ dupli = concatMap (\x -> [x,x])
 
 dupli2 [] = []
 dupli2 (x:xs) = x:x:dupli2 xs
+
+-- Q15
+repli xs n = concatMap (replicate n) xs
+repli2 = flip $ concatMap . replicate
