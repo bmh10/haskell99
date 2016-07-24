@@ -115,3 +115,5 @@ dropEvery xs n = map snd [(i, x) | (i, x) <- zip [1..] xs, i `mod` n /= 0]
 dropEvery2 xs n = map fst $ filter ((n/=) . snd) $ zip xs (cycle [1..n])
 
 -- Q17
+split xs n = (take n xs, drop n xs)
+split2 = flip splitAt
