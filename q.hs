@@ -120,3 +120,10 @@ split2 = flip splitAt
 
 -- Q18
 slice xs s e = drop (s-1) $ take e xs
+
+-- Q19
+rotate [] _ = []
+rotate xs 0 = xs
+rotate (x:xs) n
+ | n > 0 = rotate (xs++[x]) (n-1)
+ | n < 0 = rotate (last xs : x : init xs) (n+1)
