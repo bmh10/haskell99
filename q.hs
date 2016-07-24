@@ -117,3 +117,6 @@ dropEvery2 xs n = map fst $ filter ((n/=) . snd) $ zip xs (cycle [1..n])
 -- Q17
 split xs n = (take n xs, drop n xs)
 split2 = flip splitAt
+
+-- Q18
+slice xs s e = drop (s-1) $ take e xs
