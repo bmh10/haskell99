@@ -127,3 +127,6 @@ rotate xs 0 = xs
 rotate (x:xs) n
  | n > 0 = rotate (xs++[x]) (n-1)
  | n < 0 = rotate (last xs : x : init xs) (n+1)
+
+-- Q20
+removeAt n xs = (xs !! (n-1), take (n-1) xs ++ drop n xs)
