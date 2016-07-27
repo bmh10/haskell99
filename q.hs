@@ -130,3 +130,8 @@ rotate (x:xs) n
 
 -- Q20
 removeAt n xs = (xs !! (n-1), take (n-1) xs ++ drop n xs)
+
+-- Q21
+insertAt x xs n = take (n-1) xs ++ [x] ++ drop (n-1) xs
+
+insertAt2 x xs n = ys ++ x:zs where (ys, zs) = split xs (n-1)
