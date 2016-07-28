@@ -1,4 +1,5 @@
 import Data.List
+import System.Random
 
 -- Q1
 myLast1 = last
@@ -142,3 +143,8 @@ range lb ub = [lb..ub]
 range2 = enumFromTo
 
 range3 x y = take (y-x+1) $ iterate (+1) x
+
+-- Q23
+rnd_select xs n = do
+    gen <- getStdGen
+    return $ take n [ xs !! x | x <- randomRs (0, (length xs) - 1) gen]
