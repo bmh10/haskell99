@@ -135,12 +135,12 @@ removeAt n xs = (xs !! (n-1), take (n-1) xs ++ drop n xs)
 -- Q21
 insertAt x xs n = take (n-1) xs ++ [x] ++ drop (n-1) xs
 
-insertAt2 x xs n = ys ++ x:zs where (ys, zs) = split xs (n-1)
+insertAt2 x xs n = ys ++ x:zs where (ys, zs) = Main.split xs (n-1)
 
 -- Q22
 range lb ub = [lb..ub]
 
-range2 = enumFromTo
+--range2 = enumFromTo
 
 range3 x y = take (y-x+1) $ iterate (+1) x
 
