@@ -86,3 +86,10 @@ whereEx name = n : lastName
 letEx name = let lastName = " Smith" in name ++ lastName
 
 letEx2 = [func | x <- [1..10], let func = x*x]
+
+-- Case expressions
+caseEx xs = case xs of [] -> "Empty"
+                       [x] -> "Singleton"
+                       xs -> "Longer list"
+
+
