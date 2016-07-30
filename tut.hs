@@ -62,7 +62,7 @@ tupleZipInf = zip [1..] "abc"
 -- Integral => whole numbers e.g. Int, Integer
 -- Floating => floating point numbers e.g. Float, Double
 
--- fomrIntegral :: (Num b, Integral a) => a -> b
+-- fromIntegral :: (Num b, Integral a) => a -> b
 fromIntegralEx = fromIntegral 4 + 1.2
 
 -- Syntax in Functions
@@ -72,6 +72,17 @@ errorExample = error "Crash the program"
 patternEx :: String -> String
 patternEx all@(x:xs) = "The head of " ++ all ++ " is " ++ [x]
 
+-- Guards
+guardEx a
+ | a == 0 = 0
+ | otherwise = 1
 
+-- Where
+whereEx name = n : lastName
+  where (n:ns) = name
+        lastName = " Smith"
 
+-- Let
+letEx name = let lastName = " Smith" in name ++ lastName
 
+letEx2 = [func | x <- [1..10], let func = x*x]
