@@ -92,4 +92,11 @@ caseEx xs = case xs of [] -> "Empty"
                        [x] -> "Singleton"
                        xs -> "Longer list"
 
+-- Recursion
+quicksort :: (Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) = smaller ++ [x] ++ bigger
+  where smaller = quicksort [a | a <- xs, a <= x ]
+        bigger =  quicksort [a | a <- xs, a >  x ] 
+
 
