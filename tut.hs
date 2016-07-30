@@ -96,7 +96,28 @@ caseEx xs = case xs of [] -> "Empty"
 quicksort :: (Ord a) => [a] -> [a]
 quicksort [] = []
 quicksort (x:xs) = smaller ++ [x] ++ bigger
-  where smaller = quicksort [a | a <- xs, a <= x ]
-        bigger =  quicksort [a | a <- xs, a >  x ] 
+  where smaller = quicksort $ filter (<=x) xs
+        bigger =  quicksort $ filter (>x)  xs 
+
+-- Currying
+isUpperAlphanum = (`elem` ['A'..'Z'])
+
+-- Higher order functions
+zipWithEx = zipWith (+) [1,2,3] [4,5,6]
+
+flipEx = (flip div) 2 10
+
+mapEx = map fst [(1,2), (3,5)]
+
+filterEx = filter (\x -> x > 3 && even x) [1..30]
+
+sumOfOddSquaresUpto10000 = sum $ takeWhile (<10000)  $ filter odd $ map (^2) [1..]
+
+foldEx = foldl (\acc x -> acc + x) 0 [1..10]
+foldEx' = foldl (+) 0 [1..10]
+
+foldrEx = foldr (\x acc -> x + acc) 0 [1..10]
+
+scanEx = scanl (+) 0 [1..10]
 
 
