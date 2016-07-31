@@ -1,4 +1,17 @@
+-- Importing modules
+import Data.List
 
+-- GHCI
+-- :m + Data.List
+
+-- Import specific functions
+import Data.List (nub, sort)
+
+-- Import all except specific functions
+import Data.List hiding (nub)
+
+-- Ensure use of qualifier
+import qualified Data.List as L
 
 -- 1. Starting out
 basic = succ 5 + min 5 6 + max 1 2 + 2 `div` 2
@@ -120,4 +133,6 @@ foldrEx = foldr (\x acc -> x + acc) 0 [1..10]
 
 scanEx = scanl (+) 0 [1..10]
 
+-- Function composition
+oddSquareSumCompositionEx = sum . takeWhile (<10000) . filter odd . map (^2) $ [1..]
 
