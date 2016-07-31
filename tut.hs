@@ -139,4 +139,30 @@ oddSquareSumCompositionEx = sum . takeWhile (<10000) . filter odd . map (^2) $ [
 -- Data.List modules
 intersperseEx = intersperse '.' "Banana"
 
+intercalateEx = intercalate [0,0,0] [[1,2,3], [4,5,6]]
+
+transposeEx = transpose [[1,2,3],[4,5,6]]
+
+concatEx = concat ["john", "smith"]
+
+concatMapEx = concatMap (replicate 3) [1..10]
+
+andEx = and $ map (==4) [1,2,3,4]
+
+orEx = or $ map (>4) [1,2,3,5]
+
+anyEx = any (==4) [1,2,3,4]
+
+allEx = all (>4) [1,2,3,5]
+
+iterateEx = take 10 $ iterate (*2) 1
+
+splitAtEx = splitAt 3 "foobar"
+
+takeWhileEx = takeWhile (>1) [1,2,3,0,5]
+
+dropWhileEx = dropWhile (<3) [1,2,2,3,4]
+
+
+
 
