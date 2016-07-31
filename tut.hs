@@ -136,3 +136,7 @@ scanEx = scanl (+) 0 [1..10]
 -- Function composition
 oddSquareSumCompositionEx = sum . takeWhile (<10000) . filter odd . map (^2) $ [1..]
 
+-- Data.List modules
+intersperseEx = intersperse '.' "Banana"
+
+
