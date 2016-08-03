@@ -163,6 +163,15 @@ takeWhileEx = takeWhile (>1) [1,2,3,0,5]
 
 dropWhileEx = dropWhile (<3) [1,2,2,3,4]
 
+spanEx = span (<3) [1,2,3,4,5,6]
+
+breakEx = break (==4) [1,2,3,4,5,6,7]
+
+sortEx = sort [6,4,8,2,1]
+
+groupEx = group [1,1,1,2,2,3,4,4]
+
+
 
 
 
