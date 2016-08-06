@@ -192,5 +192,17 @@ partitionEx = partition (>2) [1,2,3,4,5,6]
 -- Maybe values can either have a single value (Just something) or no value (Nothing)
 findEx = find (>5) [1,5,6]
 
+elemIndexEx = elemIndex 2 [1,2,3,4]
 
+elemIndicesEx = elemIndices 2 [1,2,2,2,3,4]
+
+findIndexEx = findIndex (==2) [1,2,3,4,2]
+
+findIndicesEx = findIndices (==2) [1,2,2,3,4]
+
+zip3Ex = zip3 [1,2] [3,4] [5,6]
+
+zipWith3Ex = zipWith3 (\x y z -> x+y+z) [1,2] [3,4] [5,6]
+
+linesEx = lines "joe\nsmith\nis\nhere"
 
