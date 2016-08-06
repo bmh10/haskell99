@@ -206,3 +206,29 @@ zipWith3Ex = zipWith3 (\x y z -> x+y+z) [1,2] [3,4] [5,6]
 
 linesEx = lines "joe\nsmith\nis\nhere"
 
+unlinesEx = unlines ["joe", "smith"]
+
+wordsEx = words "joe bloggs is not real"
+
+unwordsEx = unwords ["joe", "bloggs"]
+
+--Remove duplicates
+nubEx = nub [1,1,2,3,4,4]
+
+--Remove first occurance
+deleteEx = delete 3 [1,2,3,4,5]
+
+--Set difference
+diffEx = [1..10] \\ [3,4,5]
+
+--Set union
+unionEx = union [1,2,3] [3,4,5]
+
+--Set intersect
+intersextEx = intersect [1,2,3,4] [3,4,5,6]
+
+insertEx = insert 4 [1,2,3,4,6,7]
+
+
+
+
