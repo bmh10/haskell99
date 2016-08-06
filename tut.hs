@@ -229,6 +229,10 @@ intersextEx = intersect [1,2,3,4] [3,4,5,6]
 
 insertEx = insert 4 [1,2,3,4,6,7]
 
+-- Some functions reserved for ints e.g. length have generic counterparts e.g. genericLength
+
+groupByEx = groupBy (\x y -> (x > 0) == (y > 0)) [-1,2,-3,2,3,4,-5]
+
 
 
 
