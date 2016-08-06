@@ -171,7 +171,26 @@ sortEx = sort [6,4,8,2,1]
 
 groupEx = group [1,1,1,2,2,3,4,4]
 
+initsEx = inits [1,2,3,4]
 
+tailsEx = tails [1,2,3,4]
+
+isInfixOfEx = isInfixOf "smith" "joe smith"
+
+isPrefixOfEx = isPrefixOf "joe" "joe smith"
+
+isSuffixOfEx = isSuffixOf "bloggs" "joe bloggs"
+
+elemEx = elem 5 [1,5,6]
+
+notElemEx = notElem 5 [1,2,3]
+
+-- Returns 2 tuple, first elem is items matching condition, second elem is items not matching condition
+partitionEx = partition (>2) [1,2,3,4,5,6]
+
+-- Finds first item matching perdicate, returns maybe value
+-- Maybe values can either have a single value (Just something) or no value (Nothing)
+findEx = find (>5) [1,5,6]
 
 
 
