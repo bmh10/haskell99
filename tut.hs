@@ -247,9 +247,12 @@ filterCharEx = all isAlphaNum "joe123"
 
 genCatEx = generalCategory ' '
 
+digitToIntEx = map digitToInt "3456"
+
 ordEx = ord 'a'
 
 chrEx = chr 97
 
 --Data.Map
+
 
