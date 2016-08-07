@@ -1,6 +1,7 @@
 -- Importing modules
 import Data.List
 import Data.Function
+import Data.Char
 
 -- GHCI
 -- :m + Data.List
@@ -239,3 +240,7 @@ onEx = groupBy ((==) `on` (>0)) [1,2,3,-1,-2,1,2,-4]
 sortByEx = sortBy (compare `on` length) [[1,2,3],[4,5,6,7],[9]]
 
 --Data.Char
+
+filterCharEx = all isAlphaNum "joe123"
+
+
