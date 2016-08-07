@@ -243,4 +243,13 @@ sortByEx = sortBy (compare `on` length) [[1,2,3],[4,5,6,7],[9]]
 
 filterCharEx = all isAlphaNum "joe123"
 
+--Chars fall in to categories which can be found using the 'generalCategory' function
+
+genCatEx = generalCategory ' '
+
+ordEx = ord 'a'
+
+chrEx = chr 97
+
+--Data.Map
 
