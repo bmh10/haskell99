@@ -2,7 +2,7 @@
 import Data.List
 import Data.Function
 import Data.Char
-import Data.Map as Map
+import qualified Data.Map as Map
 
 -- GHCI
 -- :m + Data.List
@@ -262,4 +262,8 @@ findKey key ((k,v):xs) = if key == k then Just v else findKey key xs
 
 findKeyFold key = foldr (\(k,v) acc -> if key == k then Just v else acc) Nothing
 
+-- Takes associated list and returns a map
+-- fromList :: (Ord k) => [(k, v)] -> Map.Map k v
+-- Key must be of type Ord, as map uses an ordered tree
+fromListEx = Map.fromList [(1,11),(2,12),(3,13)]
 
