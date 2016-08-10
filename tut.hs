@@ -2,6 +2,7 @@
 import Data.List
 import Data.Function
 import Data.Char
+import Data.Map as Map
 
 -- GHCI
 -- :m + Data.List
@@ -258,4 +259,7 @@ chrEx = chr 97
 findKey :: (Eq k) => k ->  [(k,v)] -> Maybe v
 findKey key [] = Nothing
 findKey key ((k,v):xs) = if key == k then Just v else findKey key xs
+
+findKeyFold key = foldr (\(k,v) acc -> if key == k then Just v else acc) Nothing
+
 
