@@ -267,3 +267,10 @@ findKeyFold key = foldr (\(k,v) acc -> if key == k then Just v else acc) Nothing
 -- Key must be of type Ord, as map uses an ordered tree
 fromListEx = Map.fromList [(1,11),(2,12),(3,13)]
 
+emptyEx = Map.empty
+
+mapInsertEx = Map.insert 3 100 Map.empty
+
+checkIfEmptyEx = Map.null Map.empty
+
+sizeEx = Map.size $ Map.fromList [(1,2),(3,4)] 
