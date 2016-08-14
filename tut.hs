@@ -274,3 +274,11 @@ mapInsertEx = Map.insert 3 100 Map.empty
 checkIfEmptyEx = Map.null Map.empty
 
 sizeEx = Map.size $ Map.fromList [(1,2),(3,4)] 
+
+singletonEx = Map.singleton 3 7
+
+lookupEx = Map.lookup 3 $ Map.singleton 3 8
+
+memberEx = Map.member 3 $ Map.fromList [(2,3),(3,4)]
+
+
