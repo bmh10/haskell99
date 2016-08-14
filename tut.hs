@@ -279,6 +279,17 @@ singletonEx = Map.singleton 3 7
 
 lookupEx = Map.lookup 3 $ Map.singleton 3 8
 
-memberEx = Map.member 3 $ Map.fromList [(2,3),(3,4)]
+memberEx = Map.member 3 $ Map.fromList [(2,3), (3,4)]
 
+mapMapEx = Map.map (*100) $ Map.singleton 2 5
+
+mapFilterEx = Map.filter isUpper $ Map.fromList [(1,'a'), (2,'G')]
+
+toListEx = Map.toList . Map.insert 7 8 $ Map.singleton 3 4
+
+-- keys == map fst . Map.toList
+keysEx = Map.keys $ Map.fromList [(1,2), (3,4)]
+
+-- elems = map snd . Map.toList
+elemsEx = Map.elems $ Map.fromList [(1,2), (3,4)]
 
