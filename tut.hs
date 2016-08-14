@@ -293,3 +293,9 @@ keysEx = Map.keys $ Map.fromList [(1,2), (3,4)]
 -- elems = map snd . Map.toList
 elemsEx = Map.elems $ Map.fromList [(1,2), (3,4)]
 
+-- fromListWith -> same as fromList but does not discard duplicates, uses function instead
+fromListWithEx = Map.fromListWith max [(1,2), (1,5), (3,5), (3,7)]
+
+-- insertWith -> uses function to determine what to do when duplicate found
+insertWithEx = Map.insertWith (+) 3 100 $ Map.fromList [(3,10), (4,10)]
+
