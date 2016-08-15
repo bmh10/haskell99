@@ -3,6 +3,7 @@ import Data.List
 import Data.Function
 import Data.Char
 import qualified Data.Map as Map
+import qualified Data.Set as Set
 
 -- GHCI
 -- :m + Data.List
@@ -298,4 +299,21 @@ fromListWithEx = Map.fromListWith max [(1,2), (1,5), (3,5), (3,7)]
 
 -- insertWith -> uses function to determine what to do when duplicate found
 insertWithEx = Map.insertWith (+) 3 100 $ Map.fromList [(3,10), (4,10)]
+
+-- Data.Set -> ordered + unique
+sharedEx = Set.intersection (Set.fromList "joe") (Set.fromList "moe")
+
+-- Other funcs include difference, union, null size, member, empty, singleton, insert, delete
+
+-- Set A is subset of set B, if B contains all elements in A
+subsetOfEx = (Set.fromList "abc") `Set.isSubsetOf` (Set.fromList "abc")
+
+-- Set A is proper subset of set B, if B contains all elements in A plus some more 
+properSubsetOfEx = (Set.fromList "abc") `Set.isProperSubsetOf` (Set.fromList "xxabcxx")
+
+setMapAndFilterEx = Set.map toUpper $ Set.filter isLower $ Set.fromList "abcDEF"
+
+-- Following is faster than nub on large lists, but requires elements to be of Ord type. nub preserves order, setNub does not.
+setNub xs = Set.toList $ Set.fromList xs
+
 
