@@ -4,6 +4,9 @@ import Data.Function
 import Data.Char
 import qualified Data.Map as Map
 import qualified Data.Set as Set
+import qualified Geometry.Sphere as Sphere
+import qualified Geometry.Cube as Cube
+import qualified Geometry.Cuboid as Cuboid
 
 -- GHCI
 -- :m + Data.List
