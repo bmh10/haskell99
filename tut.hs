@@ -319,4 +319,6 @@ setMapAndFilterEx = Set.map toUpper $ Set.filter isLower $ Set.fromList "abcDEF"
 -- Following is faster than nub on large lists, but requires elements to be of Ord type. nub preserves order, setNub does not.
 setNub xs = Set.toList $ Set.fromList xs
 
+-- Types & Typclasses
+data Shape = Circle Float Float Float | Rectangle Float Float Float Float
 
