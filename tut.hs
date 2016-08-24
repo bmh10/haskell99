@@ -343,7 +343,7 @@ data Person = Person { firstName :: String,
 data Car = Car { company :: String,
                  model :: String,
                  year :: Int
-               } deriving (Show)
+               } deriving (Eq, Show, Read)
 
 carEx = Car {company="Ford", model="GT", year=2005}
 
@@ -359,3 +359,11 @@ vecMult (Vector a b c) n = Vector (a*n) (b*n) (c*n)
 
 scalarMult :: (Num a) => Vector a -> Vector a -> a
 scalarMult (Vector a b c) (Vector i j k) = a*i + b*j + c*k
+
+-- Derived instances
+
+readEx1 = read "Car {company=\"Ford\", model=\"Mustang\", year=1980}" :: Car
+
+readEx2 = read "Just 't'" :: Maybe Char
+
+
