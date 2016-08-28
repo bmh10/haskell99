@@ -366,4 +366,13 @@ readEx1 = read "Car {company=\"Ford\", model=\"Mustang\", year=1980}" :: Car
 
 readEx2 = read "Just 't'" :: Maybe Char
 
-data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving (Eq, Ord, Show, Read, Bounded, Enum)  
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving (Eq, Ord, Show, Read, Bounded, Enum) 
+
+boundedEx = succ Monday
+
+-- Type synonyms
+
+type PhoneNumber = String
+type Name = String
+type PhoneBook = [(Name, PhoneNumber)]
+ 
