@@ -375,4 +375,10 @@ boundedEx = succ Monday
 type PhoneNumber = String
 type Name = String
 type PhoneBook = [(Name, PhoneNumber)]
- 
+
+-- Parameterized type synonyms
+type AssocList k v = [(k, v)]
+
+data MyEither a b = Left a | Right b deriving (Eq, Ord, Read, Show)
+
+
