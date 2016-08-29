@@ -381,4 +381,10 @@ type AssocList k v = [(k, v)]
 
 data MyEither a b = Left a | Right b deriving (Eq, Ord, Read, Show)
 
+data LockerState = Taken | Free deriving (Show, Eq)
+
+type Code = String
+
+type LockerMap = Map.Map Int (LockerState, Code)
+
 
