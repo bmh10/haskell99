@@ -435,4 +435,6 @@ treeElem x (Node a left right)
  | x < a  = treeElem x left
  | x > a  = treeElem x right
 
+nums = [8,6,4,1,7,3,5]
+numsTree = foldr treeInsert EmptyTree nums
  
