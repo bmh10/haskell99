@@ -456,4 +456,8 @@ instance Eq TrafficLight where
   Yellow == Yellow = True
   _ == _ = False 
 
+instance Show TrafficLight where
+  show Red = "Red Light"
+  show Yellow = "Yellow Light"
+  show Green = "Green Light"
 
