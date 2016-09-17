@@ -461,3 +461,4 @@ instance Show TrafficLight where
   show Yellow = "Yellow Light"
   show Green = "Green Light"
 
+class YesNo a where yesno :: a -> Bool
