@@ -471,4 +471,19 @@ instance YesNo [a] where
   yesno [] = False
   yesno _  = True
 
+instance YesNo Bool where 
+  yesno = id
+
+instance YesNo (Maybe a) where
+  yesno (Just _) = True
+  yesno Nothing  = False
+
+instance YesNo (Tree a) where
+  yesno EmptyTree = False
+  yesno _         = True
+
+yesnoIf :: (YesNo y) => y -> a -> a -> a
+yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noResult
+
+-- The Functor Typeclass
 
