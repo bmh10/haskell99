@@ -487,3 +487,8 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noRe
 
 -- The Functor Typeclass
 
+class MyFunctor f where 
+  fmap :: (a -> b) -> f a -> f b
+
+-- fmap == map for lists
+
