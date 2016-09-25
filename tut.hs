@@ -491,4 +491,7 @@ class MyFunctor f where
   fmap :: (a -> b) -> f a -> f b
 
 -- fmap == map for lists
+instance MyFunctor Maybe where
+  fmap f (Just a) = Just (f a)
+  fmap f Nothing  = Nothing
 
