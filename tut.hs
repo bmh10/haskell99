@@ -488,10 +488,13 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noRe
 -- The Functor Typeclass
 
 class MyFunctor f where 
-  fmap :: (a -> b) -> f a -> f b
+  myfmap :: (a -> b) -> f a -> f b
 
 -- fmap == map for lists
 instance MyFunctor Maybe where
-  fmap f (Just a) = Just (f a)
-  fmap f Nothing  = Nothing
+  myfmap f (Just a) = Just (f a)
+  myfmap f Nothing  = Nothing
 
+instance Functor Tree where
+  fmap f EmptyTree = EmptyTree
+  fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
