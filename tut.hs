@@ -498,3 +498,9 @@ instance MyFunctor Maybe where
 instance Functor Tree where
   fmap f EmptyTree = EmptyTree
   fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
+
+instance MyFunctor (Either a) where
+  myfmap f (Right x) = Right (f x)
+  myfmap f (Left x)  = Left x
+
+
