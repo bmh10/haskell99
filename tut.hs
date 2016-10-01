@@ -503,4 +503,8 @@ instance MyFunctor (Either a) where
   myfmap f (Right x) = Right (f x)
   myfmap f (Left x)  = Left x
 
+-- Kinds => type of a type
+-- e.g. :k Int (in GHCi)
+-- * => concrete type
+
 
