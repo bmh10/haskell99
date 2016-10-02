@@ -508,3 +508,5 @@ instance MyFunctor (Either a) where
 -- * => concrete type
 
 
+-- Input/Output
+main = putStrLn "Hello world"
