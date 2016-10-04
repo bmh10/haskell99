@@ -509,8 +509,23 @@ instance MyFunctor (Either a) where
 
 
 -- Input/Output
+-- Compile: ghc --make tut
+-- Run on fly: runhaskell tut.hs
+
 main = do
   putStrLn "Hello, what's your name?"
   name <- getLine
   putStrLn ("Hi " ++ name)
+
+main2 = do
+  line <- getLine
+  if null line
+    then return ()
+    else do
+      putStrLn $ reverseWords line
+      main2
+
+reverseWords :: String -> String
+reverseWords = unwords . map reverse . words
+
 
