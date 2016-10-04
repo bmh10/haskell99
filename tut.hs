@@ -2,6 +2,7 @@
 import Data.List
 import Data.Function
 import Data.Char
+import Control.Monad
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Geometry.Sphere as Sphere
@@ -528,4 +529,12 @@ main2 = do
 reverseWords :: String -> String
 reverseWords = unwords . map reverse . words
 
+-- putStrLn - for strings
+-- print    - for other types
 
+-- when - if true, returns IO action passed, else return ()
+main3 = do
+  c <- getChar
+  when (c /= ' ') $ do
+    putChar c
+    main3 
