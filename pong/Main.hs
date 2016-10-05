@@ -82,8 +82,10 @@ moveBall seconds game = game { ballLoc = (x', y')}
 fps :: Int
 fps = 60
 
-main :: IO ()
-main = simulate window background fps initialState render update
-
+-- | Update the game by moving the ball.
+-- Ignore the ViewPort argument.
 update :: ViewPort -> Float -> PongGame -> PongGame
 update _ = moveBall
+
+main :: IO ()
+main = simulate window background fps initialState render update
