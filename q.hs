@@ -148,3 +148,6 @@ range3 x y = take (y-x+1) $ iterate (+1) x
 rnd_select xs n = do
     gen <- getStdGen
     return $ take n [ xs !! x | x <- randomRs (0, (length xs) - 1) gen]
+
+
+
