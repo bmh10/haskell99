@@ -537,4 +537,15 @@ main3 = do
   c <- getChar
   when (c /= ' ') $ do
     putChar c
-    main3 
+    main3
+
+sequenceEx = do
+  sequence $ map print [1,2,3] 
+
+mapMEx = do
+  mapM_ print [1,2,3,4]
+
+foreverEx = forever $ do
+  putStrLn "Input: "
+  l <- getLine
+  putStrLn $ map toUpper l
