@@ -26,7 +26,7 @@ data PongGame = Game
 initialState :: PongGame
 initialState = Game
   { ballLoc = (-10, 30)
-  , ballVel = (1, -3)
+  , ballVel = (5, -5)
   , player1 = 40
   , player2 = -80
   }
@@ -62,5 +62,24 @@ render game =
 
     paddleColor = light (light blue)
 
+
+-- | Update the ball position using its current velocity.
+moveBall :: Float    -- ^ The number of seconds since last update
+         -> PongGame -- ^ The initial game state
+         -> PongGame -- ^ A new game state with an updated ball position
+moveBall seconds game = game { ballLoc = (x', y')}
+  where 
+    -- Old location and velocity
+    (x, y)   = ballLoc game
+    (vx, vy) = ballVel game
+
+    -- Updated location
+    x' = x + vx * seconds
+    y' = y + vy * seconds
+
+
 main :: IO ()
-main = display window background (render initialState)
+main = animate window background frame
+  where 
+    frame :: Float -> Picture
+    frame seconds = render $ moveBall seconds initialState
