@@ -8,6 +8,9 @@ width = 300
 height = 300
 offset = 100
 ballRadius = 10
+paddleX = 120
+paddleWidth = 26
+paddleHeight = 86
 
 window :: Display
 window = InWindow "Pong" (width, height) (offset, offset)
@@ -28,7 +31,7 @@ data PongGame = Game
 initialState :: PongGame
 initialState = Game
   { ballLoc = (-10, 30)
-  , ballVel = (-10, -50)
+  , ballVel = (-20, -100)
   , player1 = 40
   , player2 = -80
   }
@@ -38,8 +41,8 @@ render :: PongGame  -- ^ The game state to render.
        -> Picture   -- ^ A picture of this game state.
 render game =
   pictures [ball, walls,
-            mkPaddle rose 120 $ player1 game,
-            mkPaddle orange (-120) $ player2 game]
+            mkPaddle rose paddleX $ player1 game,
+            mkPaddle orange (-paddleX) $ player2 game]
   where
     --  The pong ball.
     ball = uncurry translate (ballLoc game) $ color ballColor $ circleSolid ballRadius
@@ -58,8 +61,8 @@ render game =
     --  Make a paddle of a given border and vertical offset.
     mkPaddle :: Color -> Float -> Float -> Picture
     mkPaddle col x y = pictures
-      [ translate x y $ color col $ rectangleSolid 26 86
-      , translate x y $ color paddleColor $ rectangleSolid 20 80
+      [ translate x y $ color col $ rectangleSolid paddleWidth paddleHeight
+      , translate x y $ color paddleColor $ rectangleSolid (paddleWidth-6) (paddleHeight-6)
       ]
 
     paddleColor = light (light blue)
@@ -86,7 +89,7 @@ fps = 60
 -- | Update the game by moving the ball.
 -- Ignore the ViewPort argument.
 update :: ViewPort -> Float -> PongGame -> PongGame
-update _ seconds = wallBounce . moveBall seconds
+update _ seconds = paddleBounce . wallBounce . moveBall seconds
 
 type Radius = Float 
 type Position = (Float, Float)
@@ -98,6 +101,26 @@ wallCollision (_, y) radius = topCollision || bottomCollision
     topCollision    = y - radius <= -fromIntegral width / 2 
     bottomCollision = y + radius >=  fromIntegral width / 2
 
+paddleCollision :: PongGame -> Radius -> Bool
+paddleCollision game radius = leftCollision || rightCollision
+  where
+    (x, y) = ballLoc game
+    ballLeft = (x - radius, y)
+    ballRight = (x + radius, y)
+    leftPaddlePos = (-paddleX, player1 game)
+    rightPaddlePos = (paddleX, player2 game)
+    leftCollision = rectCollision ballLeft leftPaddlePos paddleWidth paddleHeight
+    rightCollision = rectCollision ballRight rightPaddlePos paddleWidth paddleHeight
+
+rectCollision :: Position -> Position -> Float -> Float -> Bool
+rectCollision (bx, by) (rx, ry) width height = 
+  rx-w <= bx && bx <= rx+w &&
+  ry-h <= by && by <= ry+h
+  where 
+    w = width / 2
+    h = height / 2
+  
+
 -- | Detect a collision with one of the side walls. Upon collisions,
 -- update the velocity of the ball to bounce it off the wall.
 wallBounce :: PongGame -> PongGame
@@ -107,6 +130,16 @@ wallBounce game = game { ballVel  = (vx, vy')}
     vy' = if wallCollision (ballLoc game) ballRadius
           then -vy
           else vy
+
+-- | Detect a collision with a paddle. Upon collisions,
+-- change the velocity of the ball to bounce it off the paddle.
+paddleBounce :: PongGame -> PongGame
+paddleBounce game = game { ballVel = (vx', vy)}
+  where
+    (vx, vy) = ballVel game
+    vx' = if paddleCollision game ballRadius
+          then -vx
+          else vx
 
 main :: IO ()
 main = simulate window background fps initialState render update
