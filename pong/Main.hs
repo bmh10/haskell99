@@ -28,16 +28,24 @@ data PongGame = Game
                                -- Zero is the middle of the screen. 
   , player2 :: Float           -- ^ Left player paddle height.
   , paused :: Bool             -- ^ Is the game paused.
+  , wHeld :: Bool
+  , sHeld :: Bool
+  , upHeld :: Bool
+  , downHeld :: Bool
   } deriving Show 
 
 -- | The starting state for the game of Pong.
 initialState :: PongGame
 initialState = Game
   { ballLoc = (-10, 30)
-  , ballVel = (-20, -100)
+  , ballVel = (-100, -300)
   , player1 = 40
   , player2 = -80
   , paused = False
+  , wHeld = False
+  , sHeld = False
+  , upHeld = False
+  , downHeld = False
   }
 
 -- | Convert a game state into a picture.
@@ -134,6 +142,19 @@ paddleBounce game = game { ballVel = (vx', vy)}
           then -vx
           else vx
 
+-- | Move paddles independently depending on key presses
+paddleMove :: PongGame -> PongGame
+paddleMove = leftPaddleMove . rightPaddleMove
+leftPaddleMove game 
+  | (wHeld game) = game {player2 = paddleUp (player2 game)}
+  | (sHeld game) = game {player2 = paddleDn (player2 game)}
+  | otherwise    = game
+
+rightPaddleMove game
+  | (upHeld   game) = game {player1 = paddleUp (player1 game)}
+  | (downHeld game) = game {player1 = paddleDn (player1 game)}
+  | otherwise       = game
+
 
 -- | Respond to key events.
 handleKeys :: Event -> PongGame -> PongGame
@@ -144,17 +165,17 @@ handleKeys (EventKey (Char 'r') Down _ _) game =
 handleKeys (EventKey (Char 'p') Down _ _) game =
   game { paused = (not (paused game))}
 
-handleKeys (EventKey (Char 'w') _ _ _) game =
-  game {player2 = paddleUp (player2 game)}
+handleKeys (EventKey (Char 'w') state _ _) game =
+  game {wHeld = (state == Down)}
 
-handleKeys (EventKey (Char 's') _ _ _) game =
-  game {player2 = paddleDn (player2 game)}
+handleKeys (EventKey (Char 's') state _ _) game =
+  game {sHeld = (state == Down)}
 
-handleKeys (EventKey (SpecialKey KeyUp) _ _ _) game = 
-  game {player1 = paddleUp (player1 game)}
+handleKeys (EventKey (SpecialKey KeyUp) state _ _) game = 
+  game {upHeld = (state == Down)}
 
-handleKeys (EventKey (SpecialKey KeyDown) _ _ _) game = 
-  game {player1 = paddleDn (player1 game)}
+handleKeys (EventKey (SpecialKey KeyDown) state _ _) game = 
+  game {downHeld = (state == Down)}
 
 -- Do nothing for all other events.
 handleKeys _ game = game
@@ -175,7 +196,7 @@ fps = 60
 update :: Float -> PongGame -> PongGame
 update seconds game = 
   if (paused game) then game 
-  else paddleBounce $ wallBounce $ moveBall seconds game
+  else paddleBounce $ wallBounce $ paddleMove $ moveBall seconds game
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
