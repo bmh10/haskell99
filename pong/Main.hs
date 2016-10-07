@@ -2,6 +2,7 @@ module Main where
 
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
+import Graphics.Gloss.Interface.Pure.Game
 
 width, height, offset :: Int
 width = 300
@@ -82,14 +83,6 @@ moveBall seconds game = game { ballLoc = (x', y')}
     x' = x + vx * seconds
     y' = y + vy * seconds
 
--- | Number of frames to show per second.
-fps :: Int
-fps = 60
-
--- | Update the game by moving the ball.
--- Ignore the ViewPort argument.
-update :: ViewPort -> Float -> PongGame -> PongGame
-update _ seconds = paddleBounce . wallBounce . moveBall seconds
 
 type Radius = Float 
 type Position = (Float, Float)
@@ -141,5 +134,24 @@ paddleBounce game = game { ballVel = (vx', vy)}
           then -vx
           else vx
 
+-- | Respond to key events.
+handleKeys :: Event -> PongGame -> PongGame
+
+-- For an 's' keypress, reset the ball to the center.
+handleKeys (EventKey (Char 's') _ _ _) game =
+  game { ballLoc = (0, 0) }
+
+-- Do nothing for all other events.
+handleKeys _ game = game
+
+-- | Number of frames to show per second.
+fps :: Int
+fps = 60
+
+-- | Update the game by moving the ball.
+-- Ignore the ViewPort argument.
+update :: Float -> PongGame -> PongGame
+update seconds = paddleBounce . wallBounce . moveBall seconds
+
 main :: IO ()
-main = simulate window background fps initialState render update
+main = play window background fps initialState render handleKeys update
