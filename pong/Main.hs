@@ -8,6 +8,7 @@ width, height, offset :: Int
 width = 300
 height = 300
 offset = 100
+wallHeight = 10
 ballRadius = 10
 paddleX = 120
 paddleWidth = 26
@@ -56,7 +57,7 @@ render game =
     wall offset =
       translate 0 offset $
         color wallColor $
-          rectangleSolid 270 10
+          rectangleSolid 270 wallHeight
 
     wallColor = greyN 0.5
     walls = pictures [wall 150, wall (-150)]
@@ -136,15 +137,37 @@ paddleBounce game = game { ballVel = (vx', vy)}
           then -vx
           else vx
 
+
 -- | Respond to key events.
 handleKeys :: Event -> PongGame -> PongGame
 
--- For an 's' keypress, reset the ball to the center.
-handleKeys (EventKey (Char 's') Down _ _) game = game { ballLoc = (0, 0) }
-handleKeys (EventKey (Char 'p') Down _ _) game = game { paused = (not (paused game))}
+handleKeys (EventKey (Char 'r') Down _ _) game = 
+  game { ballLoc = (0, 0) }
+
+handleKeys (EventKey (Char 'p') Down _ _) game =
+  game { paused = (not (paused game))}
+
+handleKeys (EventKey (Char 'w') _ _ _) game =
+  game {player2 = paddleUp (player2 game)}
+
+handleKeys (EventKey (Char 's') _ _ _) game =
+  game {player2 = paddleDn (player2 game)}
+
+handleKeys (EventKey (SpecialKey KeyUp) _ _ _) game = 
+  game {player1 = paddleUp (player1 game)}
+
+handleKeys (EventKey (SpecialKey KeyDown) _ _ _) game = 
+  game {player1 = paddleDn (player1 game)}
 
 -- Do nothing for all other events.
 handleKeys _ game = game
+
+paddleMin, paddleMax :: Float
+paddleMax = (fromIntegral height/2) - paddleHeight/2 - wallHeight/2
+paddleMin = -(fromIntegral height/2) + paddleHeight/2 + wallHeight/2
+
+paddleUp pos = min (pos + 5) paddleMax
+paddleDn pos = max (pos - 5) paddleMin
 
 -- | Number of frames to show per second.
 fps :: Int
