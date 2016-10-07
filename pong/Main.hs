@@ -32,6 +32,8 @@ data PongGame = Game
   , sHeld :: Bool
   , upHeld :: Bool
   , downHeld :: Bool
+  , player1Score :: Int
+  , player2Score :: Int
   } deriving Show 
 
 -- | The starting state for the game of Pong.
@@ -46,13 +48,15 @@ initialState = Game
   , sHeld = False
   , upHeld = False
   , downHeld = False
+  , player1Score = 0
+  , player2Score = 0
   }
 
 -- | Convert a game state into a picture.
 render :: PongGame  -- ^ The game state to render.
        -> Picture   -- ^ A picture of this game state.
 render game =
-  pictures [ball, walls,
+  pictures [ball, walls, scores,
             mkPaddle rose paddleX $ player1 game,
             mkPaddle orange (-paddleX) $ player2 game]
   where
@@ -69,6 +73,11 @@ render game =
 
     wallColor = greyN 0.5
     walls = pictures [wall 150, wall (-150)]
+
+    score :: Float -> Int -> Picture
+    score xoffset scr = translate xoffset 0 $ scale 0.2 0.2 $ color white $ text $ show scr
+
+    scores = pictures [score (-20) (player2Score game), score 20 (player1Score game)]
 
     --  Make a paddle of a given border and vertical offset.
     mkPaddle :: Color -> Float -> Float -> Picture
@@ -155,12 +164,23 @@ rightPaddleMove game
   | (downHeld game) = game {player1 = paddleDn (player1 game)}
   | otherwise       = game
 
+detectEndGame :: PongGame -> PongGame
+detectEndGame game
+  | x < (-w) = resetBall $ game {player1Score = (player1Score game) + 1}
+  | x > w    = resetBall $ game {player2Score = (player2Score game) + 1}
+  | otherwise = game
+  where 
+    (x, y) = ballLoc game
+    w = fromIntegral width/2
+
+resetBall :: PongGame -> PongGame
+resetBall game = game { ballLoc = (0, 0) }
 
 -- | Respond to key events.
 handleKeys :: Event -> PongGame -> PongGame
 
 handleKeys (EventKey (Char 'r') Down _ _) game = 
-  game { ballLoc = (0, 0) }
+  resetBall game
 
 handleKeys (EventKey (Char 'p') Down _ _) game =
   game { paused = (not (paused game))}
@@ -196,7 +216,7 @@ fps = 60
 update :: Float -> PongGame -> PongGame
 update seconds game = 
   if (paused game) then game 
-  else paddleBounce $ wallBounce $ paddleMove $ moveBall seconds game
+  else detectEndGame $ paddleBounce $ wallBounce $ paddleMove $ moveBall seconds game
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
