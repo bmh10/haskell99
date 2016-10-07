@@ -26,6 +26,7 @@ data PongGame = Game
   , player1 :: Float           -- ^ Left player paddle height.
                                -- Zero is the middle of the screen. 
   , player2 :: Float           -- ^ Right player paddle height.
+  , paused :: Bool             -- ^ Is the game paused.
   } deriving Show 
 
 -- | The starting state for the game of Pong.
@@ -35,6 +36,7 @@ initialState = Game
   , ballVel = (-20, -100)
   , player1 = 40
   , player2 = -80
+  , paused = False
   }
 
 -- | Convert a game state into a picture.
@@ -138,8 +140,8 @@ paddleBounce game = game { ballVel = (vx', vy)}
 handleKeys :: Event -> PongGame -> PongGame
 
 -- For an 's' keypress, reset the ball to the center.
-handleKeys (EventKey (Char 's') _ _ _) game =
-  game { ballLoc = (0, 0) }
+handleKeys (EventKey (Char 's') Down _ _) game = game { ballLoc = (0, 0) }
+handleKeys (EventKey (Char 'p') Down _ _) game = game { paused = (not (paused game))}
 
 -- Do nothing for all other events.
 handleKeys _ game = game
@@ -151,7 +153,9 @@ fps = 60
 -- | Update the game by moving the ball.
 -- Ignore the ViewPort argument.
 update :: Float -> PongGame -> PongGame
-update seconds = paddleBounce . wallBounce . moveBall seconds
+update seconds game = 
+  if (paused game) then game 
+  else paddleBounce $ wallBounce $ moveBall seconds game
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
