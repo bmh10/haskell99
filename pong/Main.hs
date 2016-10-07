@@ -5,12 +5,14 @@ import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
 
 width, height, offset :: Int
-width = 300
-height = 300
+width = 600
+height = 400
 offset = 100
 wallHeight = 10
+wallWidth = fromIntegral $ width - 30
+wallYOffset = fromIntegral $ div height 2
 ballRadius = 10
-paddleX = 120
+paddleX = 260
 paddleWidth = 26
 paddleHeight = 86
 
@@ -40,7 +42,7 @@ data PongGame = Game
 initialState :: PongGame
 initialState = Game
   { ballLoc = (-10, 30)
-  , ballVel = (-100, -300)
+  , ballVel = (-170, -500)
   , player1 = 40
   , player2 = -80
   , paused = False
@@ -69,10 +71,10 @@ render game =
     wall offset =
       translate 0 offset $
         color wallColor $
-          rectangleSolid 270 wallHeight
+          rectangleSolid wallWidth wallHeight
 
     wallColor = greyN 0.5
-    walls = pictures [wall 150, wall (-150)]
+    walls = pictures [wall wallYOffset, wall (-wallYOffset)]
 
     score :: Float -> Int -> Picture
     score xoffset scr = translate xoffset 0 $ scale 0.2 0.2 $ color white $ text $ show scr
@@ -111,8 +113,8 @@ type Position = (Float, Float)
 wallCollision :: Position -> Radius -> Bool 
 wallCollision (_, y) radius = topCollision || bottomCollision
   where
-    topCollision    = y - radius <= -fromIntegral width / 2 
-    bottomCollision = y + radius >=  fromIntegral width / 2
+    topCollision    = y - radius <= -fromIntegral height / 2 
+    bottomCollision = y + radius >=  fromIntegral height / 2
 
 paddleCollision :: PongGame -> Radius -> Bool
 paddleCollision game radius = leftCollision || rightCollision
@@ -204,8 +206,8 @@ paddleMin, paddleMax :: Float
 paddleMax = (fromIntegral height/2) - paddleHeight/2 - wallHeight/2
 paddleMin = -(fromIntegral height/2) + paddleHeight/2 + wallHeight/2
 
-paddleUp pos = min (pos + 5) paddleMax
-paddleDn pos = max (pos - 5) paddleMin
+paddleUp pos = min (pos + 10) paddleMax
+paddleDn pos = max (pos - 10) paddleMin
 
 -- | Number of frames to show per second.
 fps :: Int
