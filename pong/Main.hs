@@ -24,9 +24,9 @@ background = black
 data PongGame = Game
   { ballLoc :: (Float, Float)  -- ^ Pong ball (x, y) location.
   , ballVel :: (Float, Float)  -- ^ Pong ball (x, y) velocity. 
-  , player1 :: Float           -- ^ Left player paddle height.
+  , player1 :: Float           -- ^ Right player paddle height.
                                -- Zero is the middle of the screen. 
-  , player2 :: Float           -- ^ Right player paddle height.
+  , player2 :: Float           -- ^ Left player paddle height.
   , paused :: Bool             -- ^ Is the game paused.
   } deriving Show 
 
@@ -103,18 +103,15 @@ paddleCollision game radius = leftCollision || rightCollision
     (x, y) = ballLoc game
     ballLeft = (x - radius, y)
     ballRight = (x + radius, y)
-    leftPaddlePos = (-paddleX, player1 game)
-    rightPaddlePos = (paddleX, player2 game)
+    leftPaddlePos = (-paddleX-paddleWidth/2, (player2 game)-paddleHeight/2)
+    rightPaddlePos = (paddleX-paddleWidth/2, (player1 game)-paddleHeight/2)
     leftCollision = rectCollision ballLeft leftPaddlePos paddleWidth paddleHeight
     rightCollision = rectCollision ballRight rightPaddlePos paddleWidth paddleHeight
 
 rectCollision :: Position -> Position -> Float -> Float -> Bool
 rectCollision (bx, by) (rx, ry) width height = 
-  rx-w <= bx && bx <= rx+w &&
-  ry-h <= by && by <= ry+h
-  where 
-    w = width / 2
-    h = height / 2
+  rx <= bx && bx <= rx+width &&
+  ry <= by && by <= ry+height
   
 
 -- | Detect a collision with one of the side walls. Upon collisions,
