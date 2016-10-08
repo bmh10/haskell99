@@ -22,30 +22,31 @@ window = InWindow "Pong" (width, height) (offset, offset)
 background :: Color
 background = black
 
--- | Data describing the state of the pong game. 
+type Radius = Float 
+type Position = (Float, Float)
+
 data PongGame = Game
-  { ballLoc :: (Float, Float)  -- ^ Pong ball (x, y) location.
-  , ballVel :: (Float, Float)  -- ^ Pong ball (x, y) velocity. 
-  , player1 :: Float           -- ^ Right player paddle height.
-                               -- Zero is the middle of the screen. 
-  , player2 :: Float           -- ^ Left player paddle height.
-  , paused :: Bool             -- ^ Is the game paused.
+  { ballPos :: (Float, Float)
+  , ballVel :: (Float, Float)
+  , player1Pos :: Float
+  , player2Pos :: Float
+  , player1Score :: Int
+  , player2Score :: Int
   , wHeld :: Bool
   , sHeld :: Bool
   , upHeld :: Bool
   , downHeld :: Bool
-  , player1Score :: Int
-  , player2Score :: Int
+
+  , paused :: Bool
   , showMenu :: Bool
   } deriving Show 
 
--- | The starting state for the game of Pong.
 initialState :: PongGame
 initialState = Game
-  { ballLoc = (-10, 30)
+  { ballPos = (-10, 30)
   , ballVel = (-170, -500)
-  , player1 = 40
-  , player2 = -80
+  , player1Pos = 40
+  , player2Pos = -80
   , paused = False
   , wHeld = False
   , sHeld = False
@@ -56,17 +57,16 @@ initialState = Game
   , showMenu = True
   }
 
--- | Convert a game state into a picture.
-render :: PongGame  -- ^ The game state to render.
-       -> Picture   -- ^ A picture of this game state.
+
+render :: PongGame -> Picture 
 render game
   | (showMenu game) = renderMenu
   | otherwise = pictures [ball, walls, scores,
-            mkPaddle rose paddleX $ player1 game,
-            mkPaddle orange (-paddleX) $ player2 game]
+            mkPaddle rose paddleX $ player1Pos game,
+            mkPaddle orange (-paddleX) $ player2Pos game]
   where
     --  The pong ball.
-    ball = uncurry translate (ballLoc game) $ color ballColor $ circleSolid ballRadius
+    ball = uncurry translate (ballPos game) $ color ballColor $ circleSolid ballRadius
     ballColor = dark red
 
     --  The bottom and top walls.
@@ -95,23 +95,16 @@ renderMenu :: Picture
 renderMenu = pictures [translate (-20) 0 $ scale 0.2 0.2 $ color white $ text "Pong",
                        translate (-50) (-50) $ scale 0.1 0.1 $ color white $ text "Press SPACE to start"]
 
--- | Update the ball position using its current velocity.
-moveBall :: Float    -- ^ The number of seconds since last update
-         -> PongGame -- ^ The initial game state
-         -> PongGame -- ^ A new game state with an updated ball position
-moveBall seconds game = game { ballLoc = (x', y')}
-  where 
-    -- Old location and velocity
-    (x, y)   = ballLoc game
+moveBall :: Float -> PongGame -> PongGame
+moveBall seconds game = game { ballPos = (x', y')}
+  where
+    (x, y)   = ballPos game
     (vx, vy) = ballVel game
-
-    -- Updated location
     x' = x + vx * seconds
     y' = y + vy * seconds
 
 
-type Radius = Float 
-type Position = (Float, Float)
+
 
 -- | Given position and radius of the ball, return whether a collision occurred.
 wallCollision :: Position -> Radius -> Bool 
@@ -123,11 +116,11 @@ wallCollision (_, y) radius = topCollision || bottomCollision
 paddleCollision :: PongGame -> Radius -> Bool
 paddleCollision game radius = leftCollision || rightCollision
   where
-    (x, y) = ballLoc game
+    (x, y) = ballPos game
     ballLeft = (x - radius, y)
     ballRight = (x + radius, y)
-    leftPaddlePos = (-paddleX-paddleWidth/2, (player2 game)-paddleHeight/2)
-    rightPaddlePos = (paddleX-paddleWidth/2, (player1 game)-paddleHeight/2)
+    leftPaddlePos = (-paddleX-paddleWidth/2, (player2Pos game)-paddleHeight/2)
+    rightPaddlePos = (paddleX-paddleWidth/2, (player1Pos game)-paddleHeight/2)
     leftCollision = rectCollision ballLeft leftPaddlePos paddleWidth paddleHeight
     rightCollision = rectCollision ballRight rightPaddlePos paddleWidth paddleHeight
 
@@ -143,7 +136,7 @@ wallBounce :: PongGame -> PongGame
 wallBounce game = game { ballVel  = (vx, vy')}
   where
     (vx, vy) = ballVel game
-    vy' = if wallCollision (ballLoc game) ballRadius
+    vy' = if wallCollision (ballPos game) ballRadius
           then -vy
           else vy
 
@@ -161,13 +154,13 @@ paddleBounce game = game { ballVel = (vx', vy)}
 movePaddle :: PongGame -> PongGame
 movePaddle = moveLeftPaddle . moveRightPaddle
 moveLeftPaddle game 
-  | (wHeld game) = game {player2 = paddleUp (player2 game)}
-  | (sHeld game) = game {player2 = paddleDn (player2 game)}
+  | (wHeld game) = game {player2Pos = paddleUp (player2Pos game)}
+  | (sHeld game) = game {player2Pos = paddleDn (player2Pos game)}
   | otherwise    = game
 
 moveRightPaddle game
-  | (upHeld   game) = game {player1 = paddleUp (player1 game)}
-  | (downHeld game) = game {player1 = paddleDn (player1 game)}
+  | (upHeld   game) = game {player1Pos = paddleUp (player1Pos game)}
+  | (downHeld game) = game {player1Pos = paddleDn (player1Pos game)}
   | otherwise       = game
 
 paddleMin, paddleMax :: Float
@@ -183,11 +176,11 @@ detectEndGame game
   | x > w    = resetBall $ game {player2Score = (player2Score game) + 1}
   | otherwise = game
   where 
-    (x, y) = ballLoc game
+    (x, y) = ballPos game
     w = fromIntegral width/2
 
 resetBall :: PongGame -> PongGame
-resetBall game = game { ballLoc = (0, 0) }
+resetBall game = game { ballPos = (0, 0) }
 
 -- | Respond to key events.
 handleKeys :: Event -> PongGame -> PongGame
@@ -216,15 +209,13 @@ handleKeys (EventKey (SpecialKey KeyDown) state _ _) game =
 -- Do nothing for all other events.
 handleKeys _ game = game
 
--- | Update the game by moving the ball.
--- Ignore the ViewPort argument.
+
 update :: Float -> PongGame -> PongGame
 update seconds game 
   | (paused game) = game 
   | (showMenu game) = game
   | otherwise = detectEndGame $ paddleBounce $ wallBounce $ movePaddle $ moveBall seconds game
 
--- | Number of frames to show per second.
 fps :: Int
 fps = 60
 
