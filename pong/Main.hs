@@ -26,10 +26,10 @@ type Position = (Float, Float)
 data PongGame = Game
   { ballPos :: (Float, Float)
   , ballVel :: (Float, Float)
-  , player1Pos :: Float
-  , player2Pos :: Float
-  , player1Score :: Int
-  , player2Score :: Int
+  , playerLPos :: Float
+  , playerRPos :: Float
+  , playerLScore :: Int
+  , playerRScore :: Int
   , wHeld :: Bool
   , sHeld :: Bool
   , upHeld :: Bool
@@ -42,15 +42,15 @@ initialState :: PongGame
 initialState = Game
   { ballPos = (-10, 30)
   , ballVel = (-170, -500)
-  , player1Pos = 40
-  , player2Pos = -80
-  , paused = False
+  , playerLPos = 40
+  , playerRPos = -80
+  , playerLScore = 0
+  , playerRScore = 0
   , wHeld = False
   , sHeld = False
   , upHeld = False
   , downHeld = False
-  , player1Score = 0
-  , player2Score = 0
+  , paused = False
   , showMenu = True
   }
 
@@ -72,10 +72,10 @@ renderGame game = pictures [ball, walls, scores, paddles]
     walls = pictures [wall wallYOffset, wall (-wallYOffset)]
 
     score xpos val = translate xpos 0 $ scale 0.2 0.2 $ color white $ text $ show val
-    scores = pictures [score (-20) (player2Score game), score 20 (player1Score game)]
+    scores = pictures [score (-20) (playerLScore game), score 20 (playerRScore game)]
 
     paddle col x y = translate x y $ color col $ rectangleSolid paddleWidth paddleHeight
-    paddles = pictures [paddle rose paddleX $ player1Pos game, paddle orange (-paddleX) $ player2Pos game]
+    paddles = pictures [paddle rose (-paddleX) $ playerLPos game, paddle orange paddleX $ playerRPos game]
      
 moveBall :: Float -> PongGame -> PongGame
 moveBall seconds game = game { ballPos = (x', y')}
@@ -88,19 +88,30 @@ moveBall seconds game = game { ballPos = (x', y')}
 movePaddle :: PongGame -> PongGame
 movePaddle = moveLeftPaddle . moveRightPaddle -- Move paddles independently
 moveLeftPaddle game 
-  | (wHeld game) = game {player2Pos = paddleUp (player2Pos game)}
-  | (sHeld game) = game {player2Pos = paddleDn (player2Pos game)}
+  | (wHeld game) = game {playerLPos = paddleUp (playerLPos game)}
+  | (sHeld game) = game {playerLPos = paddleDn (playerLPos game)}
   | otherwise    = game
 
 moveRightPaddle game
-  | (upHeld   game) = game {player1Pos = paddleUp (player1Pos game)}
-  | (downHeld game) = game {player1Pos = paddleDn (player1Pos game)}
+  | (upHeld   game) = game {playerRPos = paddleUp (playerRPos game)}
+  | (downHeld game) = game {playerRPos = paddleDn (playerRPos game)}
   | otherwise       = game
 
 paddleUp pos = min (pos + 10) paddleMax
 paddleDn pos = max (pos - 10) paddleMin
 
--- | Given position and radius of the ball, return whether a collision occurred.
+wallBounce :: PongGame -> PongGame
+wallBounce game = game { ballVel  = (vx, vy')}
+  where
+    (vx, vy) = ballVel game
+    vy' = if wallCollision (ballPos game) ballRadius then -vy else vy
+
+paddleBounce :: PongGame -> PongGame
+paddleBounce game = game { ballVel = (vx', vy)}
+  where
+    (vx, vy) = ballVel game
+    vx' = if paddleCollision game ballRadius then -vx else vx
+
 wallCollision :: Position -> Radius -> Bool 
 wallCollision (_, y) radius = topCollision || bottomCollision
   where
@@ -113,76 +124,37 @@ paddleCollision game radius = leftCollision || rightCollision
     (x, y) = ballPos game
     ballLeft = (x - radius, y)
     ballRight = (x + radius, y)
-    leftPaddlePos = (-paddleX-paddleWidth/2, (player2Pos game)-paddleHeight/2)
-    rightPaddlePos = (paddleX-paddleWidth/2, (player1Pos game)-paddleHeight/2)
+    leftPaddlePos = (-paddleX-paddleWidth/2, (playerLPos game)-paddleHeight/2)
+    rightPaddlePos = (paddleX-paddleWidth/2, (playerRPos game)-paddleHeight/2)
     leftCollision = rectCollision ballLeft leftPaddlePos paddleWidth paddleHeight
     rightCollision = rectCollision ballRight rightPaddlePos paddleWidth paddleHeight
 
 rectCollision :: Position -> Position -> Float -> Float -> Bool
 rectCollision (bx, by) (rx, ry) width height = 
-  rx <= bx && bx <= rx+width &&
-  ry <= by && by <= ry+height
+  rx <= bx && bx <= rx+width && ry <= by && by <= ry+height
   
-
--- | Detect a collision with one of the side walls. Upon collisions,
--- update the velocity of the ball to bounce it off the wall.
-wallBounce :: PongGame -> PongGame
-wallBounce game = game { ballVel  = (vx, vy')}
-  where
-    (vx, vy) = ballVel game
-    vy' = if wallCollision (ballPos game) ballRadius
-          then -vy
-          else vy
-
--- | Detect a collision with a paddle. Upon collisions,
--- change the velocity of the ball to bounce it off the paddle.
-paddleBounce :: PongGame -> PongGame
-paddleBounce game = game { ballVel = (vx', vy)}
-  where
-    (vx, vy) = ballVel game
-    vx' = if paddleCollision game ballRadius
-          then -vx
-          else vx
-
 detectEndGame :: PongGame -> PongGame
 detectEndGame game
-  | x < (-w) = resetBall $ game {player1Score = (player1Score game) + 1}
-  | x > w    = resetBall $ game {player2Score = (player2Score game) + 1}
+  | x < (-w) = resetBall $ game {playerRScore = (playerRScore game) + 1}
+  | x > w    = resetBall $ game {playerLScore = (playerLScore game) + 1}
   | otherwise = game
   where 
-    (x, y) = ballPos game
+    (x, _) = ballPos game
     w = fromIntegral width/2
 
 resetBall :: PongGame -> PongGame
 resetBall game = game { ballPos = (0, 0) }
 
--- | Respond to key events.
+-- Event handling
 handleKeys :: Event -> PongGame -> PongGame
-
-handleKeys (EventKey (Char 'r') Down _ _) game = 
-  resetBall game
-
-handleKeys (EventKey (Char 'p') Down _ _) game =
-  game { paused = (not (paused game))}
-
-handleKeys (EventKey (SpecialKey KeySpace) _ _ _) game =
-  game { showMenu = False }
-
-handleKeys (EventKey (Char 'w') state _ _) game =
-  game {wHeld = (state == Down)}
-
-handleKeys (EventKey (Char 's') state _ _) game =
-  game {sHeld = (state == Down)}
-
-handleKeys (EventKey (SpecialKey KeyUp) state _ _) game = 
-  game {upHeld = (state == Down)}
-
-handleKeys (EventKey (SpecialKey KeyDown) state _ _) game = 
-  game {downHeld = (state == Down)}
-
--- Do nothing for all other events.
+handleKeys (EventKey (Char 'r') Down _ _) game = resetBall game
+handleKeys (EventKey (Char 'p') Down _ _) game = game { paused = (not (paused game))}
+handleKeys (EventKey (SpecialKey KeySpace) _ _ _) game = game { showMenu = False }
+handleKeys (EventKey (Char 'w') state _ _) game = game {wHeld = (state == Down)}
+handleKeys (EventKey (Char 's') state _ _) game = game {sHeld = (state == Down)}
+handleKeys (EventKey (SpecialKey KeyUp) state _ _) game = game {upHeld = (state == Down)}
+handleKeys (EventKey (SpecialKey KeyDown) state _ _) game = game {downHeld = (state == Down)}
 handleKeys _ game = game
-
 
 update :: Float -> PongGame -> PongGame
 update seconds game 
@@ -190,5 +162,4 @@ update seconds game
   | (showMenu game) = game
   | otherwise = detectEndGame $ paddleBounce $ wallBounce $ movePaddle $ moveBall seconds game
 
-main :: IO ()
 main = play window background fps initialState render handleKeys update
