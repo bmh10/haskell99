@@ -36,6 +36,7 @@ data PongGame = Game
   , downHeld :: Bool
   , player1Score :: Int
   , player2Score :: Int
+  , showMenu :: Bool
   } deriving Show 
 
 -- | The starting state for the game of Pong.
@@ -52,13 +53,15 @@ initialState = Game
   , downHeld = False
   , player1Score = 0
   , player2Score = 0
+  , showMenu = True
   }
 
 -- | Convert a game state into a picture.
 render :: PongGame  -- ^ The game state to render.
        -> Picture   -- ^ A picture of this game state.
-render game =
-  pictures [ball, walls, scores,
+render game
+  | (showMenu game) = renderMenu
+  | otherwise = pictures [ball, walls, scores,
             mkPaddle rose paddleX $ player1 game,
             mkPaddle orange (-paddleX) $ player2 game]
   where
@@ -89,6 +92,10 @@ render game =
       ]
 
     paddleColor = light (light blue)
+
+renderMenu :: Picture
+renderMenu = pictures [translate (-20) 0 $ scale 0.2 0.2 $ color white $ text "Pong",
+                       translate (-50) (-50) $ scale 0.1 0.1 $ color white $ text "Press SPACE to start"]
 
 
 -- | Update the ball position using its current velocity.
@@ -187,6 +194,9 @@ handleKeys (EventKey (Char 'r') Down _ _) game =
 handleKeys (EventKey (Char 'p') Down _ _) game =
   game { paused = (not (paused game))}
 
+handleKeys (EventKey (SpecialKey KeySpace) _ _ _) game =
+  game { showMenu = False }
+
 handleKeys (EventKey (Char 'w') state _ _) game =
   game {wHeld = (state == Down)}
 
@@ -216,9 +226,10 @@ fps = 60
 -- | Update the game by moving the ball.
 -- Ignore the ViewPort argument.
 update :: Float -> PongGame -> PongGame
-update seconds game = 
-  if (paused game) then game 
-  else detectEndGame $ paddleBounce $ wallBounce $ paddleMove $ moveBall seconds game
+update seconds game 
+  | (paused game) = game 
+  | (showMenu game) = game
+  | otherwise = detectEndGame $ paddleBounce $ wallBounce $ paddleMove $ moveBall seconds game
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
