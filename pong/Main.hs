@@ -13,7 +13,7 @@ wallWidth = fromIntegral $ width - 30
 wallYOffset = fromIntegral $ div height 2
 ballRadius = 10
 paddleX = 260
-paddleWidth = 26
+paddleWidth = 5
 paddleHeight = 86
 
 window :: Display
@@ -86,17 +86,14 @@ render game
 
     --  Make a paddle of a given border and vertical offset.
     mkPaddle :: Color -> Float -> Float -> Picture
-    mkPaddle col x y = pictures
-      [ translate x y $ color col $ rectangleSolid paddleWidth paddleHeight
-      , translate x y $ color paddleColor $ rectangleSolid (paddleWidth-6) (paddleHeight-6)
-      ]
+    mkPaddle col x y = translate x y $ color col $ rectangleSolid paddleWidth paddleHeight
+     
 
     paddleColor = light (light blue)
 
 renderMenu :: Picture
 renderMenu = pictures [translate (-20) 0 $ scale 0.2 0.2 $ color white $ text "Pong",
                        translate (-50) (-50) $ scale 0.1 0.1 $ color white $ text "Press SPACE to start"]
-
 
 -- | Update the ball position using its current velocity.
 moveBall :: Float    -- ^ The number of seconds since last update
@@ -161,17 +158,24 @@ paddleBounce game = game { ballVel = (vx', vy)}
           else vx
 
 -- | Move paddles independently depending on key presses
-paddleMove :: PongGame -> PongGame
-paddleMove = leftPaddleMove . rightPaddleMove
-leftPaddleMove game 
+movePaddle :: PongGame -> PongGame
+movePaddle = moveLeftPaddle . moveRightPaddle
+moveLeftPaddle game 
   | (wHeld game) = game {player2 = paddleUp (player2 game)}
   | (sHeld game) = game {player2 = paddleDn (player2 game)}
   | otherwise    = game
 
-rightPaddleMove game
+moveRightPaddle game
   | (upHeld   game) = game {player1 = paddleUp (player1 game)}
   | (downHeld game) = game {player1 = paddleDn (player1 game)}
   | otherwise       = game
+
+paddleMin, paddleMax :: Float
+paddleMax = (fromIntegral height/2) - paddleHeight/2 - wallHeight/2
+paddleMin = -(fromIntegral height/2) + paddleHeight/2 + wallHeight/2
+
+paddleUp pos = min (pos + 10) paddleMax
+paddleDn pos = max (pos - 10) paddleMin
 
 detectEndGame :: PongGame -> PongGame
 detectEndGame game
@@ -212,24 +216,17 @@ handleKeys (EventKey (SpecialKey KeyDown) state _ _) game =
 -- Do nothing for all other events.
 handleKeys _ game = game
 
-paddleMin, paddleMax :: Float
-paddleMax = (fromIntegral height/2) - paddleHeight/2 - wallHeight/2
-paddleMin = -(fromIntegral height/2) + paddleHeight/2 + wallHeight/2
-
-paddleUp pos = min (pos + 10) paddleMax
-paddleDn pos = max (pos - 10) paddleMin
-
--- | Number of frames to show per second.
-fps :: Int
-fps = 60
-
 -- | Update the game by moving the ball.
 -- Ignore the ViewPort argument.
 update :: Float -> PongGame -> PongGame
 update seconds game 
   | (paused game) = game 
   | (showMenu game) = game
-  | otherwise = detectEndGame $ paddleBounce $ wallBounce $ paddleMove $ moveBall seconds game
+  | otherwise = detectEndGame $ paddleBounce $ wallBounce $ movePaddle $ moveBall seconds game
+
+-- | Number of frames to show per second.
+fps :: Int
+fps = 60
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
