@@ -4,7 +4,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
 
-width, height, offset :: Int
+fps = 60
 width = 600
 height = 400
 offset = 100
@@ -15,11 +15,9 @@ ballRadius = 10
 paddleX = 260
 paddleWidth = 5
 paddleHeight = 86
-
-window :: Display
+paddleMax = (fromIntegral height/2) - paddleHeight/2 - wallHeight/2
+paddleMin = -(fromIntegral height/2) + paddleHeight/2 + wallHeight/2
 window = InWindow "Pong" (width, height) (offset, offset)
-
-background :: Color
 background = black
 
 type Radius = Float 
@@ -36,9 +34,8 @@ data PongGame = Game
   , sHeld :: Bool
   , upHeld :: Bool
   , downHeld :: Bool
-
   , paused :: Bool
-  , showMenu :: Bool
+  , showMenu :: Bool 
   } deriving Show 
 
 initialState :: PongGame
@@ -57,44 +54,29 @@ initialState = Game
   , showMenu = True
   }
 
-
 render :: PongGame -> Picture 
 render game
   | (showMenu game) = renderMenu
-  | otherwise = pictures [ball, walls, scores,
-            mkPaddle rose paddleX $ player1Pos game,
-            mkPaddle orange (-paddleX) $ player2Pos game]
-  where
-    --  The pong ball.
-    ball = uncurry translate (ballPos game) $ color ballColor $ circleSolid ballRadius
-    ballColor = dark red
-
-    --  The bottom and top walls.
-    wall :: Float -> Picture
-    wall offset =
-      translate 0 offset $
-        color wallColor $
-          rectangleSolid wallWidth wallHeight
-
-    wallColor = greyN 0.5
-    walls = pictures [wall wallYOffset, wall (-wallYOffset)]
-
-    score :: Float -> Int -> Picture
-    score xoffset scr = translate xoffset 0 $ scale 0.2 0.2 $ color white $ text $ show scr
-
-    scores = pictures [score (-20) (player2Score game), score 20 (player1Score game)]
-
-    --  Make a paddle of a given border and vertical offset.
-    mkPaddle :: Color -> Float -> Float -> Picture
-    mkPaddle col x y = translate x y $ color col $ rectangleSolid paddleWidth paddleHeight
-     
-
-    paddleColor = light (light blue)
+  | otherwise       = renderGame game
 
 renderMenu :: Picture
-renderMenu = pictures [translate (-20) 0 $ scale 0.2 0.2 $ color white $ text "Pong",
+renderMenu = pictures [translate (-20) 0     $ scale 0.2 0.2 $ color white $ text "Pong",
                        translate (-50) (-50) $ scale 0.1 0.1 $ color white $ text "Press SPACE to start"]
 
+renderGame :: PongGame -> Picture
+renderGame game = pictures [ball, walls, scores, paddles]
+  where
+    ball = uncurry translate (ballPos game) $ color (dark red) $ circleSolid ballRadius
+
+    wall ypos = translate 0 ypos $ color (greyN 0.5) $ rectangleSolid wallWidth wallHeight
+    walls = pictures [wall wallYOffset, wall (-wallYOffset)]
+
+    score xpos val = translate xpos 0 $ scale 0.2 0.2 $ color white $ text $ show val
+    scores = pictures [score (-20) (player2Score game), score 20 (player1Score game)]
+
+    paddle col x y = translate x y $ color col $ rectangleSolid paddleWidth paddleHeight
+    paddles = pictures [paddle rose paddleX $ player1Pos game, paddle orange (-paddleX) $ player2Pos game]
+     
 moveBall :: Float -> PongGame -> PongGame
 moveBall seconds game = game { ballPos = (x', y')}
   where
@@ -103,8 +85,20 @@ moveBall seconds game = game { ballPos = (x', y')}
     x' = x + vx * seconds
     y' = y + vy * seconds
 
+movePaddle :: PongGame -> PongGame
+movePaddle = moveLeftPaddle . moveRightPaddle -- Move paddles independently
+moveLeftPaddle game 
+  | (wHeld game) = game {player2Pos = paddleUp (player2Pos game)}
+  | (sHeld game) = game {player2Pos = paddleDn (player2Pos game)}
+  | otherwise    = game
 
+moveRightPaddle game
+  | (upHeld   game) = game {player1Pos = paddleUp (player1Pos game)}
+  | (downHeld game) = game {player1Pos = paddleDn (player1Pos game)}
+  | otherwise       = game
 
+paddleUp pos = min (pos + 10) paddleMax
+paddleDn pos = max (pos - 10) paddleMin
 
 -- | Given position and radius of the ball, return whether a collision occurred.
 wallCollision :: Position -> Radius -> Bool 
@@ -149,26 +143,6 @@ paddleBounce game = game { ballVel = (vx', vy)}
     vx' = if paddleCollision game ballRadius
           then -vx
           else vx
-
--- | Move paddles independently depending on key presses
-movePaddle :: PongGame -> PongGame
-movePaddle = moveLeftPaddle . moveRightPaddle
-moveLeftPaddle game 
-  | (wHeld game) = game {player2Pos = paddleUp (player2Pos game)}
-  | (sHeld game) = game {player2Pos = paddleDn (player2Pos game)}
-  | otherwise    = game
-
-moveRightPaddle game
-  | (upHeld   game) = game {player1Pos = paddleUp (player1Pos game)}
-  | (downHeld game) = game {player1Pos = paddleDn (player1Pos game)}
-  | otherwise       = game
-
-paddleMin, paddleMax :: Float
-paddleMax = (fromIntegral height/2) - paddleHeight/2 - wallHeight/2
-paddleMin = -(fromIntegral height/2) + paddleHeight/2 + wallHeight/2
-
-paddleUp pos = min (pos + 10) paddleMax
-paddleDn pos = max (pos - 10) paddleMin
 
 detectEndGame :: PongGame -> PongGame
 detectEndGame game
@@ -215,9 +189,6 @@ update seconds game
   | (paused game) = game 
   | (showMenu game) = game
   | otherwise = detectEndGame $ paddleBounce $ wallBounce $ movePaddle $ moveBall seconds game
-
-fps :: Int
-fps = 60
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
