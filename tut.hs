@@ -549,3 +549,25 @@ foreverEx = forever $ do
   putStrLn "Input: "
   l <- getLine
   putStrLn $ map toUpper l
+
+-- In Haskell 'return' converts a non-IO type into an IO type e.g. String -> IO String
+
+mainWhen = do
+  when (True) $ do
+    putChar 'a'
+
+mainSequence = do
+  rs <- sequence [getLine, getLine]
+  print rs
+
+mainForM = do   
+    colors <- forM [1,2,3,4] (\a -> do  
+        putStrLn $ "Which color do you associate with the number " ++ show a ++ "?"  
+        color <- getLine  
+        return color)  
+    putStrLn "The colors that you associate with 1, 2, 3 and 4 are: "  
+    mapM putStrLn colors  
+
+mainGetContents = do  
+    contents <- getContents  
+    putStr (map toUpper contents)  
