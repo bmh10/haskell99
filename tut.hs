@@ -570,4 +570,9 @@ mainForM = do
 
 mainGetContents = do  
     contents <- getContents  
-    putStr (map toUpper contents)  
+    putStr (map toUpper contents)
+
+-- interact takes a String -> String function and return an IO action that takes an input, will run the function on it, and print out the result
+mainInteract = interact $ unlines . filter ((<10) . length) . lines
+
+
