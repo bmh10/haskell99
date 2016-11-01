@@ -3,6 +3,7 @@ import Data.List
 import Data.Function
 import Data.Char
 import Control.Monad
+import System.IO
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Geometry.Sphere as Sphere
@@ -579,3 +580,9 @@ mainPalindromeInteract = interact respondPalindromes
 respondPalindromes = unlines . 
   map (\xs -> if isPalindrome xs then "palindrome" else "not palindrome")  . lines
   where isPalindrome xs = xs == reverse xs 
+
+mainFileRead = do
+  handle   <- openFile "test.txt" ReadMode
+  contents <- hGetContents handle
+  putStr contents
+  hClose handle
