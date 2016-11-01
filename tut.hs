@@ -586,3 +586,17 @@ mainFileRead = do
   contents <- hGetContents handle
   putStr contents
   hClose handle
+
+mainWithFileEx = withFile "test.txt" ReadMode (\h -> do
+                   contents <- hGetContents h
+                   putStr contents)
+
+-- This is how withFile could be defined
+withFile' :: FilePath -> IOMode -> (Handle -> IO r) -> IO r
+withFile' path mode func = do
+  handle <- openFile path mode
+  result <- func handle
+  hClose handle
+  return result
+
+
