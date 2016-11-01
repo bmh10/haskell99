@@ -575,4 +575,7 @@ mainGetContents = do
 -- interact takes a String -> String function and return an IO action that takes an input, will run the function on it, and print out the result
 mainInteract = interact $ unlines . filter ((<10) . length) . lines
 
-
+mainPalindromeInteract = interact respondPalindromes
+respondPalindromes = unlines . 
+  map (\xs -> if isPalindrome xs then "palindrome" else "not palindrome")  . lines
+  where isPalindrome xs = xs == reverse xs 
