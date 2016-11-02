@@ -599,4 +599,16 @@ withFile' path mode func = do
   hClose handle
   return result
 
+-- Common functions when working with handles: hGetLine, hPutStr, hPutStrLn, hGetChar
+
+mainSimpleFileRead = do
+  contents <- readFile "test.txt"
+  putStr contents
+
+mainSimpleFileWrite = do
+  contents <- readFile "test.txt"
+  writeFile "testCaps.txt" (map toUpper contents)
+
+-- appendFile appends to end instead of overwriting
+
 
