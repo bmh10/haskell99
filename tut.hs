@@ -611,4 +611,11 @@ mainSimpleFileWrite = do
 
 -- appendFile appends to end instead of overwriting
 
+-- Possible buffer modes: NoBuffering, LineBuffering, BlockBuffering (Maybe Int) 
+mainBufferEx = do
+  withFile "test.txt" ReadMode (\handle -> do
+    hSetBuffering handle $ BlockBuffering (Just 2048)
+    contents <- hGetContents handle
+    putStr contents)
+
 
