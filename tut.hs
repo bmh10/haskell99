@@ -4,6 +4,7 @@ import Data.Function
 import Data.Char
 import Control.Monad
 import System.IO
+import System.Directory
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Geometry.Sphere as Sphere
@@ -618,4 +619,22 @@ mainBufferEx = do
     contents <- hGetContents handle
     putStr contents)
 
+-- hFlush can be used on a handle to flush the buffer
 
+mainFileOpsEx = do        
+    handle <- openFile "test.txt" ReadMode  
+    (tempName, tempHandle) <- openTempFile "." "temp"  
+    contents <- hGetContents handle  
+    let todoTasks = lines contents     
+    let  numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0..] todoTasks     
+    putStrLn "These are your TO-DO items:"  
+    putStr $ unlines numberedTasks  
+    putStrLn "Which one do you want to delete?"     
+    numberString <- getLine     
+    let number = read numberString     
+        newTodoItems = delete (todoTasks !! number) todoTasks     
+    hPutStr tempHandle $ unlines newTodoItems  
+    hClose handle  
+    hClose tempHandle  
+    removeFile "test.txt"  
+    renameFile tempName "test.txt" 
