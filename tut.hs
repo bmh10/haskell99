@@ -6,6 +6,7 @@ import Control.Monad
 import System.IO
 import System.Directory
 import System.Environment
+import System.Random
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Geometry.Sphere as Sphere
@@ -677,4 +678,16 @@ remove [fileName, numberString] = do
     renameFile tempName fileName
 
 -- Randomness
+randInt = random (mkStdGen 100) :: (Int, StdGen)
 
+threeCoins :: StdGen -> (Bool, Bool, Bool)
+threeCoins gen = 
+ let (c1, gen')   = random gen
+     (c2, gen'')  = random gen'
+     (c3, gen''') = random gen''
+  in (c1, c2, c3)
+
+manyRandInts = randoms (mkStdGen 100) :: [Int]
+
+randoms' :: (RandomGen g, Random a) => g -> [a]
+randoms' gen = let (val, gen') = random gen in val:randoms' gen'
