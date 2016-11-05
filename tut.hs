@@ -691,3 +691,14 @@ manyRandInts = randoms (mkStdGen 100) :: [Int]
 
 randoms' :: (RandomGen g, Random a) => g -> [a]
 randoms' gen = let (val, gen') = random gen in val:randoms' gen'
+
+finiteRandoms :: (RandomGen g, Random a) => Int -> g -> ([a], g)
+finiteRandoms 0 gen = ([], gen)
+finiteRandoms n gen =
+  let (value, newGen) = random gen
+      (restOfValues, finalGen) = finiteRandoms (n-1) newGen
+  in (value:restOfValues, finalGen)
+
+randomRangeEx = randomR (1,6) (mkStdGen 100) :: (Int, StdGen)
+
+
