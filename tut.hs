@@ -701,4 +701,10 @@ finiteRandoms n gen =
 
 randomRangeEx = randomR (1,6) (mkStdGen 100) :: (Int, StdGen)
 
+randomsRangeEx = take 10 $ randomRs ('a', 'z') (mkStdGen 3) :: [Char] 
 
+mainRandomEx = do     
+    gen <- getStdGen     
+    putStrLn $ take 20 (randomRs ('a','z') gen)     
+    gen' <- newStdGen  
+    putStrLn $ take 20 (randomRs ('a','z') gen')  
