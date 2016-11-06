@@ -708,3 +708,19 @@ mainRandomEx = do
     putStrLn $ take 20 (randomRs ('a','z') gen)     
     gen' <- newStdGen  
     putStrLn $ take 20 (randomRs ('a','z') gen')  
+
+mainRandomGuess = do
+  gen <- getStdGen
+  askForNumber gen
+
+askForNumber :: StdGen -> IO ()
+askForNumber gen = do
+  let (randNum, gen') = randomR (1,10) gen :: (Int, StdGen)
+  putStr "Which number from 1 to 10 am I thinking of? "
+  numberString <- getLine
+  when (not $ null numberString) $ do
+    let number = read numberString
+    if (randNum == number)
+      then putStrLn "Correct!"
+      else putStrLn $ "Incorrect, it was " ++ show randNum
+    askForNumber gen'
