@@ -742,8 +742,19 @@ packEx = B.pack [99, 97, 110]
 -- toChunks - inverse
 fromChunksEx = B.fromChunks [S.pack [40,41,42], S.pack [43,44,45], S.pack [46,47,48]]
 
+-- cons - places byte at beginning of bytestream. Lazy -> creates new chunk even if current chunk is not full
+-- cons' - strict version. Only creates new chunk if current chunk is full
 
+consEx = B.cons 85 $ B.pack [80..84]
+cons'Ex = B.cons' 85 $ B.pack [80..84]
 
+mainBytesteamFileCopy = do
+  (fn1:fn2:_) <- getArgs
+  copyFile' fn1 fn2
 
+copyFile' :: FilePath -> FilePath -> IO ()
+copyFile' src dest = do
+  contents <- B.readFile src
+  B.writeFile dest contents
 
-
+-- Exceptions
