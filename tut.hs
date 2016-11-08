@@ -12,6 +12,8 @@ import qualified Data.Set as Set
 import qualified Geometry.Sphere as Sphere
 import qualified Geometry.Cube as Cube
 import qualified Geometry.Cuboid as Cuboid
+import qualified Data.ByteString.Lazy as B  
+import qualified Data.ByteString as S
 
 -- GHCI
 -- :m + Data.List
@@ -724,3 +726,24 @@ askForNumber gen = do
       then putStrLn "Correct!"
       else putStrLn $ "Incorrect, it was " ++ show randNum
     askForNumber gen'
+
+-- Bytestrings
+-- Like lists but each element is 1 byte and handles laziness differently
+-- More efficient than lists for reading large files
+
+-- Can be strict (no thunks/promises/laziness) or lazy
+-- Lazy bytestrings are not as lazy as lists - list is split into 64K chunks. Each chunk only loaded into memory when needed.
+
+-- pack - takes a list a makes it 'less lazy' by packing into 64K chunks
+-- unpack - inverse
+packEx = B.pack [99, 97, 110]
+
+-- fromChunks - takes list of strict bytestrings and converts to lazy bytestring
+-- toChunks - inverse
+fromChunksEx = B.fromChunks [S.pack [40,41,42], S.pack [43,44,45], S.pack [46,47,48]]
+
+
+
+
+
+
