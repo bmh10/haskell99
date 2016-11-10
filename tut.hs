@@ -758,3 +758,13 @@ copyFile' src dest = do
   B.writeFile dest contents
 
 -- Exceptions
+-- Pure and IO functions can throw exceptions but must be caught in IO part of code
+
+mainCheckFileExists = do
+  (filename:_) <- getArgs
+  fileExists <- doesFileExist filename
+  if fileExists
+    then do contents <- readFile filename
+            putStrLn $ "The file has " ++ (show $ length $ lines contents) ++ " lines"
+    else do putStrLn "The file does not exist!"
+
