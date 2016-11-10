@@ -4,6 +4,7 @@ import Data.Function
 import Data.Char
 import Control.Monad
 import System.IO
+import System.IO.Error
 import System.Directory
 import System.Environment
 import System.Random
@@ -519,7 +520,7 @@ instance MyFunctor (Either a) where
 -- Compile: ghc --make tut
 -- Run on fly: runhaskell tut.hs
 
-main = do
+main1 = do
   putStrLn "Hello, what's your name?"
   name <- getLine
   putStrLn ("Hi " ++ name)
@@ -760,11 +761,35 @@ copyFile' src dest = do
 -- Exceptions
 -- Pure and IO functions can throw exceptions but must be caught in IO part of code
 
-mainCheckFileExists = do
+mainCheckFileExistsEx = do
   (filename:_) <- getArgs
   fileExists <- doesFileExist filename
   if fileExists
     then do contents <- readFile filename
             putStrLn $ "The file has " ++ (show $ length $ lines contents) ++ " lines"
     else do putStrLn "The file does not exist!"
+
+main = do toTry `catchIOError` handler
+
+toTry :: IO ()
+toTry =  do (filename:_) <- getArgs
+            contents <- readFile filename
+            putStrLn $ "The file has " ++ (show $ length $ lines contents) ++ " lines"
+
+handler :: IOError -> IO ()
+handler e
+ | isDoesNotExistError e = putStrLn "Some error occurred!"
+ | otherwise = ioError e
+
+{- Other IOError predicates: 
+    isAlreadyExistsError
+    isDoesNotExistError
+    isAlreadyInUseError
+    isFullError
+    isEOFError
+    isIllegalOperation
+    isPermissionError
+    isUserError
+-}
+
 
