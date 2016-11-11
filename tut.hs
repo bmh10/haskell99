@@ -778,7 +778,10 @@ toTry =  do (filename:_) <- getArgs
 
 handler :: IOError -> IO ()
 handler e
- | isDoesNotExistError e = putStrLn "Some error occurred!"
+ | isDoesNotExistError e = 
+     case ioeGetFileName e of 
+       Just path -> putStrLn $ "File does not exist at: " ++ path
+       Nothing -> putStrLn $ "File does not exist at unknown location"
  | otherwise = ioError e
 
 {- Other IOError predicates: 
@@ -792,4 +795,4 @@ handler e
     isUserError
 -}
 
-
+-- Full list of IOError attributes can be found here: https://downloads.haskell.org/~ghc/6.10.1/docs/html/libraries/base/System-IO-Error.html#3
