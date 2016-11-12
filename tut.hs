@@ -800,6 +800,9 @@ handler e
 -- Functionally Solving Problems
 
 -- Reverse Polish Notation
-solveRPN :: (Num a) => String -> a
-solveRPN expr = head $ foldl func [] $ words expr
-  where func stack item = ...
+solveRPN :: (Num a, Read a) => String -> a
+solveRPN = head . foldl calc [] . words 
+  where calc (x:y:ys) "*" = (x*y):ys
+        calc (x:y:ys) "+" = (x+y):ys 
+        calc (x:y:ys) "-" = (x-y):ys 
+        calc stack numString = read numString:stack
