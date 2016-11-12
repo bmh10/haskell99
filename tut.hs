@@ -800,9 +800,13 @@ handler e
 -- Functionally Solving Problems
 
 -- Reverse Polish Notation
-solveRPN :: (Num a, Read a) => String -> a
+solveRPN :: String -> Float
 solveRPN = head . foldl calc [] . words 
   where calc (x:y:ys) "*" = (x*y):ys
         calc (x:y:ys) "+" = (x+y):ys 
         calc (x:y:ys) "-" = (x-y):ys 
-        calc stack numString = read numString:stack
+        calc (x:y:ys) "/" = (x/y):ys 
+        calc (x:y:ys) "^" = (x**y):ys 
+        calc (x:xs)  "ln" = log x:xs 
+        calc xs     "sum" = [sum xs]
+        calc xs numString = read numString:xs
