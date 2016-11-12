@@ -796,3 +796,10 @@ handler e
 -}
 
 -- Full list of IOError attributes can be found here: https://downloads.haskell.org/~ghc/6.10.1/docs/html/libraries/base/System-IO-Error.html#3
+
+-- Functionally Solving Problems
+
+-- Reverse Polish Notation
+solveRPN :: (Num a) => String -> a
+solveRPN expr = head $ foldl func [] $ words expr
+  where func stack item = ...
