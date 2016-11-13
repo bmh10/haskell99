@@ -810,3 +810,17 @@ solveRPN = head . foldl calc [] . words
         calc (x:xs)  "ln" = log x:xs 
         calc xs     "sum" = [sum xs]
         calc xs numString = read numString:xs
+
+-- Heathrow to London
+
+data Section = Section { getA :: Int, getB :: Int, getC :: Int} deriving (Show)
+type RoadSystem = [Section]
+data Label = A | B | C deriving (Show)
+type Path = [(Label, Int)]
+
+heathrowToLondon :: RoadSystem
+heathrowToLondon = [Section 50 10 30, Section 5 90 20, Section 40 2 25, Section 10 8 0]
+
+--optimalPath :: RoadSystem -> Path
+
+
