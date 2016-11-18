@@ -863,5 +863,12 @@ mainHeathrowToLondon = do
 
 -- Functors, Applicative Functors and Monoids
 
+-- IO is an instance of Functor
+mainIOfmap = do
+  line <- fmap reverse getLine
+  putStrLn $ "Backwards: " ++ line
 
+mainIOfmap2 = do
+  line <- fmap (intersperse '.' . reverse . map toUpper) getLine
+  putStrLn line
 
