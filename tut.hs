@@ -872,3 +872,7 @@ mainIOfmap2 = do
   line <- fmap (intersperse '.' . reverse . map toUpper) getLine
   putStrLn line
 
+-- fmap over functions is same as function composition
+fmapEx = fmap (*3) (+100) 1
+
+-- Functor Laws
