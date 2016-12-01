@@ -879,7 +879,8 @@ fmapEx = fmap (*3) (+100) 1
 -- 1. If we map id over a functor we should get back a functor identical to the original
 -- i.e. fmap id = id
 
--- 2. Compositing 2 functions and mapping the resulting function over a functor should be the same as first mapping one function over a functor and then mapping the other one.
+-- 2. Composing 2 functions and mapping the resulting function over a functor should be the same as first mapping one function over a functor and then mapping the other one.
 -- i.e. fmap (f . g) = fmap f . fmap g
 
-
+-- Applicative Functors
+partialApplyEx = fmap (*) (Just 3)
