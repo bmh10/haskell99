@@ -884,3 +884,8 @@ fmapEx = fmap (*3) (+100) 1
 
 -- Applicative Functors
 partialApplyEx = fmap (*) (Just 3)
+
+-- Applicative def
+--class (Functor f) => Applicative f where  
+--    pure :: a -> f a  
+--    (<*>) :: f (a -> b) -> f a -> f b 
