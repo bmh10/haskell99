@@ -150,4 +150,6 @@ rnd_select xs n = do
     return $ take n [ xs !! x | x <- randomRs (0, (length xs) - 1) gen]
 
 
-
+-- Q31 Is number prime
+isPrime 1 = False
+isPrime n = not $ any (\x -> mod n x == 0) [2..n-1] 
