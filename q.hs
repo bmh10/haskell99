@@ -1,5 +1,6 @@
 import Data.List
 import System.Random
+import Data.Fixed
 
 -- Q1
 myLast1 = last
@@ -152,4 +153,5 @@ rnd_select xs n = do
 
 -- Q31 Is number prime
 isPrime 1 = False
-isPrime n = not $ any (\x -> mod n x == 0) [2..n-1] 
+isPrime n = not $ any (\x -> mod' n x == 0) [2..sqrt n]
+
