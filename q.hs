@@ -165,3 +165,7 @@ nor'  a b = not $ or'  a b
 xor'  a b = not $ equ' a b
 impl'     = or' . not
 equ'      = (==)
+
+table :: (Bool -> Bool -> Bool) -> IO ()
+table f = mapM_ putStrLn [show a ++ " " ++ show b ++ " " ++ show (f a b)
+                          | a <- [True, False], b <- [True, False]]
