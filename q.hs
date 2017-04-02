@@ -155,3 +155,13 @@ rnd_select xs n = do
 isPrime 1 = False
 isPrime n = not $ any (\x -> mod' n x == 0) [2..sqrt n]
 
+-- Logic and Codes
+-- Q46
+and',or',nor',nand',xor',impl',equ' :: Bool -> Bool -> Bool
+and'      = (&&)
+or'       = (||)
+nand' a b = not $ and' a b
+nor'  a b = not $ or'  a b
+xor'  a b = not $ equ' a b
+impl'     = or' . not
+equ'      = (==)
